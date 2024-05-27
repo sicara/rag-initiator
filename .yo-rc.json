@@ -1,0 +1,16 @@
+{
+  "generator-sicarator": {
+    "promptValues": {
+      "authorName": "Emilio DE SOUSA",
+      "authorEmail": "emilio.desousa@iqvia.com",
+      "ci": ".github",
+      "includeApi": false,
+      "includeDvc": false,
+      "includeStreamlit": false,
+      "includeHelloWorld": true
+    },
+    "projectName": "rag-initiator",
+    "projectSlug": "rag-initiator",
+    "projectDescription": "repo used to learn how to do a rag"
+  }
+}
