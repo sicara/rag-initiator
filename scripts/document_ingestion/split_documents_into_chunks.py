@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Annotated
+import pandas as pd
 
 import typer
 
@@ -15,7 +16,14 @@ def main(
     )
     documents_path = documents_folder_path.glob("*.pdf")
     chunks = []
+    path_chuncks = pd.DataFrame(columns=["document_name", "chunk"])
     for document_path in documents_path:
+        path_chuncks = path_chuncks.append(
+            {
+                "path": document_path.name,
+                "chunk": split_documents_into_chunks(document_path),
+            }
+        )
         chunks.append(split_documents_into_chunks(document_path))
 
 

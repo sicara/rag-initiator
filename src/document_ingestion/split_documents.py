@@ -1,7 +1,8 @@
 from pathlib import Path
+from langchain_core.documents import Document
 
 
-def split_documents_into_chunks(document_path: Path):
+def split_documents_into_chunks(document_path: Path) -> list[Document]:
     match document_path.suffix:
         case ".pdf":
             return split_pdf_into_chunks(document_path)
@@ -9,7 +10,7 @@ def split_documents_into_chunks(document_path: Path):
             raise ValueError(f"Unsupported document type: {document_path.suffix}")
 
 
-def split_pdf_into_chunks(document_path: Path):
+def split_pdf_into_chunks(document_path: Path) -> list[Document]:
     from langchain_community.document_loaders import PyPDFLoader
 
     loader = PyPDFLoader(document_path)
