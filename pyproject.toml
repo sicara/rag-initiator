@@ -5,7 +5,15 @@ description = "repo used to learn how to do a rag"
 authors = ["Emilio DE SOUSA <emilio.desousa@iqvia.com>"]
 
 [tool.poetry.dependencies]
-python = "3.11.6"
+python = "3.11.*"
+dvc = "^3.51.1"
+qdrant-client = "^1.9.1"
+typer = "^0.12.3"
+langchain = "^0.2.1"
+langchain-community = "^0.2.1"
+langchain-openai = "^0.1.7"
+pypdf = "^4.2.0"
+ipykernel = "^6.29.4"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.2"
