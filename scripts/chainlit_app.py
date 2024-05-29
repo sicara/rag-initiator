@@ -4,14 +4,12 @@ from langchain.chat_models import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema import StrOutputParser
 from langchain.schema.runnable.config import RunnableConfig
+from langchain_openai import OpenAIEmbeddings
+from qdrant_client import QdrantClient
+from langchain.vectorstores import Qdrant
+from src.constants import DATA_FOLDER_PATH
 
-# vector_store_path = DATA_FOLDER_PATH / "qdrant"
-# embeddings = OpenAIEmbeddings()
-# client = QdrantClient(path=str(vector_store_path))
-# db = Qdrant(client=client, collection_name="texts", embeddings=embeddings)
-
-# db.similarity_search(query="hello world", k=5)
-
+from langchain_core.runnables import RunnablePassthrough
 
 @cl.on_chat_start
 async def on_chat_start() -> None:
@@ -20,23 +18,34 @@ async def on_chat_start() -> None:
         [
             (
                 "system",
-                "You're a very knowledgeable historian who provides accurate and eloquent answers to historical questions.",
+                "You're a jedi. You answer wisely.",
             ),
             ("human", "{question}"),
         ]
     )
-    runnable = prompt | model | StrOutputParser()
-    cl.user_session.set("runnable", runnable)
+    vector_store_path = DATA_FOLDER_PATH / "qdrant"
+    embeddings = OpenAIEmbeddings()
+    client = QdrantClient(path=str(vector_store_path))
+    vector_collection = Qdrant(client=client, collection_name="texts", embeddings=embeddings)
+    
+    retriever = vector_collection.as_retriever(
+    search_type="similarity_score_threshold", search_kwargs={"score_threshold": 0.5}
+)
+    parralel = {"context": retriever, "question": RunnablePassthrough()}
 
+    runnable = parralel | prompt | model | StrOutputParser() 
+    cl.user_session.set("runnable", runnable)
+    cl.user_session.set("vector_collection", vector_collection)
 
 @cl.on_message
 async def on_message(message: cl.Message):
     runnable = cl.user_session.get("runnable")  # type: Runnable
 
     msg = cl.Message(content="")
-
+    vector_collection = cl.user_session.get("vector_collection")
     async for chunk in runnable.astream(
-        {"question": message.content},
+        message.content    
+    ,
         config=RunnableConfig(callbacks=[cl.LangchainCallbackHandler()]),
     ):
         await msg.stream_token(chunk)
