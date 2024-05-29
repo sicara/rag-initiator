@@ -15,6 +15,7 @@ langchain-openai = "^0.1.7"
 pypdf = "^4.2.0"
 ipykernel = "^6.29.4"
 pandas = "^2.2.2"
+chainlit = "^1.1.202"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.2"
